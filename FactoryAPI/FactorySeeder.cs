@@ -57,24 +57,30 @@ namespace FactoryAPI
                     .RuleFor(s => s.Street, f => f.Address.StreetAddress())
                     )
                     .RuleFor(w => w.Workers,
-                    new List<Worker>()
-                    {
-                        new Faker<Worker>()
-                        .RuleFor(f => f.FirstName,f =>  f.Person.FirstName)
-                        .RuleFor(l => l.LastName, f=> f.Person.LastName)
-                        .RuleFor(s => s.Salary, f => f.Finance.Amount(2200, 5700))
-                        .RuleFor(j => j.JobSeniority, f => new  Random().Next(0,50))
-                        .Generate(),
-
-                        new Faker<Worker>()
-                        .RuleFor(f => f.FirstName,f =>  f.Person.FirstName)
-                        .RuleFor(l => l.LastName, f=> f.Person.LastName)
-                        .RuleFor(s => s.Salary, f => f.Finance.Amount(2200, 5700))
-                        .RuleFor(j => j.JobSeniority, f => new  Random().Next(0,50)),
-                    }
+                    f => GetWorkers()
                     )
                     .Generate(100);
             return factories;
+        }
+
+        public IEnumerable<Worker> GetWorkers()
+        {
+            List<Worker> workers = new List<Worker>();
+            Random random = new Random();
+            int numberOfWorkers = random.Next(2, 15);
+
+            for (int i = 0; i < numberOfWorkers; i++)
+            {
+                workers.Add(
+                    new Faker<Worker>()
+                        .RuleFor(f => f.FirstName, f => f.Person.FirstName)
+                        .RuleFor(l => l.LastName, f => f.Person.LastName)
+                        .RuleFor(s => s.Salary, f => f.Finance.Amount(2200, 5700))
+                        .RuleFor(j => j.JobSeniority, f => new Random().Next(0, 50))
+                        );
+            }
+
+            return workers;
         }
 
     }

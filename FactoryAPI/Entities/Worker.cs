@@ -1,4 +1,6 @@
-﻿namespace FactoryAPI.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FactoryAPI.Entities
 {
     public class Worker
     {
@@ -11,5 +13,8 @@
 
         public int FactoryId { get; set; }
         public virtual Factory Factory { get; set; }
+
+        [NotMapped]
+        public string FullName { get; set; }
     }
 }

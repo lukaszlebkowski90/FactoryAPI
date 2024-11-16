@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FactoryAPI.Migrations
 {
     [DbContext(typeof(FactoryDbContext))]
-    [Migration("20241116110326_workerFullName")]
-    partial class workerFullName
+    [Migration("20241116125205_addedMaxLengthFactoryNameBy50")]
+    partial class addedMaxLengthFactoryNameBy50
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,8 +80,8 @@ namespace FactoryAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 

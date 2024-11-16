@@ -12,7 +12,7 @@ namespace FactoryAPI
 
             // Add services to the container.
             builder.Services.AddAuthorization();
-
+            builder.Services.AddScoped<FactorySeeder>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -33,6 +33,11 @@ namespace FactoryAPI
 
             app.UseAuthorization();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<FactorySeeder>();
+                seeder.Seed();
+            }
 
             app.Run();
         }

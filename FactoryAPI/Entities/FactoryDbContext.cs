@@ -29,7 +29,7 @@ namespace FactoryAPI.Entities
             modelBuilder.Entity<Factory>()
                 .Property(r => r.Name)
                 .IsRequired()
-                .HasMaxLength(25);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Worker>()
                 .Property(d => d.FirstName)
@@ -49,6 +49,9 @@ namespace FactoryAPI.Entities
                  .IsRequired()
                  .HasAnnotation("Range", (0, 50));
 
+            modelBuilder.Entity<Worker>().
+                Property(e => e.FullName)
+                .HasComputedColumnSql("[FirstName] + ' ' + [LastName]");
 
             modelBuilder.Entity<Address>()
                 .Property(a => a.City)

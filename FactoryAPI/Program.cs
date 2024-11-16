@@ -1,4 +1,7 @@
 
+using FactoryAPI.Entities;
+using Microsoft.EntityFrameworkCore;
+
 namespace FactoryAPI
 {
     public class Program
@@ -13,6 +16,9 @@ namespace FactoryAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<FactoryDbContext>
+                (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
 
             var app = builder.Build();
 

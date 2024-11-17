@@ -37,7 +37,13 @@ namespace FactoryAPI
             {
                 var seeder = scope.ServiceProvider.GetRequiredService<FactorySeeder>();
                 seeder.Seed();
+
+                var dbContext = scope.ServiceProvider.GetService<FactoryDbContext>();
+                var pendingMigrations = dbContext.Database.GetPendingMigrations();
+                if (pendingMigrations.Any())
+                    dbContext.Database.Migrate();
             }
+
 
             app.Run();
         }

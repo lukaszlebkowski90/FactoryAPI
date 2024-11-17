@@ -18,6 +18,7 @@ namespace FactoryAPI.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
             //modelBuilder.Entity<User>()
             //    .Property(u => u.Email)
             //    .IsRequired();
@@ -26,42 +27,9 @@ namespace FactoryAPI.Entities
             //    .Property(u => u.Name)
             //    .IsRequired();
 
-            modelBuilder.Entity<Factory>()
-                .Property(r => r.Name)
-                .IsRequired()
-                .HasMaxLength(50);
 
-            modelBuilder.Entity<Worker>()
-                .Property(d => d.FirstName)
-                .IsRequired();
 
-            modelBuilder.Entity<Worker>()
-                .Property(d => d.LastName)
-                .IsRequired();
 
-            modelBuilder.Entity<Worker>()
-                 .Property(d => d.Salary)
-                 .IsRequired()
-                 .HasPrecision(8, 2);
-
-            modelBuilder.Entity<Worker>()
-                 .Property(d => d.JobSeniority)
-                 .IsRequired()
-                 .HasAnnotation("Range", (0, 50));
-
-            modelBuilder.Entity<Worker>().
-                Property(e => e.FullName)
-                .HasComputedColumnSql("[FirstName] + ' ' + [LastName]");
-
-            modelBuilder.Entity<Address>()
-                .Property(a => a.City)
-                .IsRequired()
-                .HasMaxLength(50);
-
-            modelBuilder.Entity<Address>()
-                .Property(a => a.Street)
-                .IsRequired()
-                .HasMaxLength(50);
         }
 
     }

@@ -1,6 +1,8 @@
 
 using FactoryAPI.Entities;
+using FactoryAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace FactoryAPI
 {
@@ -10,28 +12,36 @@ namespace FactoryAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<FactorySeeder>();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddControllers().AddJsonOptions(option =>
+                option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IFactoryService, FactoryService>();
 
             builder.Services.AddDbContext<FactoryDbContext>
                 (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
-
             var app = builder.Build();
+            app.UseRouting();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Factory API");
+                });
             }
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+
+
 
             using (var scope = app.Services.CreateScope())
             {
@@ -43,6 +53,12 @@ namespace FactoryAPI
                 if (pendingMigrations.Any())
                     dbContext.Database.Migrate();
             }
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
 
 
             app.Run();

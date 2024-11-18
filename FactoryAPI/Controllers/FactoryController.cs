@@ -1,4 +1,5 @@
 ﻿using FactoryAPI.Entities;
+using FactoryAPI.Models;
 using FactoryAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,15 @@ namespace FactoryAPI.Controllers
                 return NotFound();
 
             return Ok(restaurant);
+        }
+
+        [HttpPost]
+        public ActionResult<Factory> Get([FromBody] CreateFactoryDto dto)
+        {
+            var factoryId = _factoryService.Create(dto);
+
+
+            return Created($"/api/factories/{factoryId}", null);
         }
 
 

@@ -9,7 +9,7 @@ namespace FactoryAPI.Services
     {
         IEnumerable<FactoryDto> GetAll();
         FactoryDto GetById(int id);
-        int Create(Factory factory);
+        int Create(CreateFactoryDto dto);
         void Delete(int id);
         void Update(int id, Factory dto);
     }
@@ -24,9 +24,14 @@ namespace FactoryAPI.Services
             _mapper = mapper;
         }
 
-        public int Create(Factory dto)
+        public int Create(CreateFactoryDto dto)
         {
-            throw new NotImplementedException();
+            var factoryDto = _mapper.Map<Factory>(dto);
+            _dbContext.Add(factoryDto);
+
+            _dbContext.SaveChanges();
+
+            return factoryDto.Id;
         }
 
         public void Delete(int id)

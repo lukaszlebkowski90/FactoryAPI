@@ -43,6 +43,14 @@ namespace FactoryAPI.Controllers
             return Created($"/api/factories/{factoryId}", null);
         }
 
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            _factoryService.Delete(id);
+
+            return NoContent();
+        }
+
 
     }
 }

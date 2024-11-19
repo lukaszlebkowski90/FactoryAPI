@@ -36,7 +36,9 @@ namespace FactoryAPI.Services
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            var factory = _dbContext.Factories.FirstOrDefault(f => f.Id == id);
+            _dbContext.Remove(factory);
+            _dbContext.SaveChanges();
         }
 
         public IEnumerable<FactoryDto> GetAll()

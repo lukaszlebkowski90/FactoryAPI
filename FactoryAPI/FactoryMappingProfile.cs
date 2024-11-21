@@ -21,6 +21,8 @@ namespace FactoryAPI
                     { City = dto.City, PostalCode = dto.PostalCode, Street = dto.Street }));
 
             CreateMap<CreateWorkerDto, Worker>();
+
+
         }
     }
 }

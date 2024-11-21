@@ -35,12 +35,20 @@ namespace FactoryAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Factory> Get([FromBody] CreateFactoryDto dto)
+        public ActionResult<Factory> Create([FromBody] CreateFactoryDto dto)
         {
             var factoryId = _factoryService.Create(dto);
 
 
             return Created($"/api/factories/{factoryId}", null);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Update([FromBody] UpdateFactoryDto dto, [FromRoute] int id)
+        {
+            _factoryService.Update(id, dto);
+
+            return Ok();
         }
 
         [HttpDelete("{id}")]

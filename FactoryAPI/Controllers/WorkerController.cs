@@ -6,14 +6,9 @@ namespace FactoryAPI.Controllers
 {
     [Route("api/factory/{factoryId}/worker")]
     [ApiController]
-    public class WorkerController : ControllerBase
+    public class WorkerController(IWorkerService workerService) : ControllerBase
     {
-        private readonly IWorkerService _workerService;
-
-        public WorkerController(IWorkerService workerService)
-        {
-            _workerService = workerService;
-        }
+        private readonly IWorkerService _workerService = workerService;
 
         [HttpDelete]
         public ActionResult Delete([FromRoute] int factoryId)

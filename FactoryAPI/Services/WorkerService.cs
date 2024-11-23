@@ -15,16 +15,11 @@ namespace FactoryAPI.Services
         void Update(int factoryId, int workerid, UpdateWorkerDto dto);
     }
 
-    public class WorkerService : IWorkerService
+    public class WorkerService(FactoryDbContext context, IMapper mapper) : IWorkerService
     {
-        private readonly FactoryDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly FactoryDbContext _dbContext = context;
+        private readonly IMapper _mapper = mapper;
 
-        public WorkerService(FactoryDbContext context, IMapper mapper)
-        {
-            _dbContext = context;
-            _mapper = mapper;
-        }
         public int Create(int factoryId, CreateWorkerDto dto)
         {
             var factory = GetFactoryById(factoryId);

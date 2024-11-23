@@ -1,4 +1,5 @@
 using FactoryAPI.Entities;
+using FactoryAPI.Middleware;
 using FactoryAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using NLog.Extensions.Logging;
@@ -27,10 +28,13 @@ namespace FactoryAPI
             });
 
             builder.Services.AddScoped<IFactoryService, FactoryService>();
+            builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
             builder.Services.AddDbContext<FactoryDbContext>
                 (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
+
             var app = builder.Build();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseRouting();
 
             if (app.Environment.IsDevelopment())

@@ -7,13 +7,9 @@ namespace FactoryAPI.Controllers
 {
     [Route("api/factories")]
     [ApiController]
-    public class FactoryController : ControllerBase
+    public class FactoryController(IFactoryService factoryService) : ControllerBase
     {
-        private readonly IFactoryService _factoryService;
-        public FactoryController(IFactoryService factoryService)
-        {
-            _factoryService = factoryService;
-        }
+        private readonly IFactoryService _factoryService = factoryService;
 
         [HttpGet]
         public ActionResult<IEnumerable<Factory>> GetAll()

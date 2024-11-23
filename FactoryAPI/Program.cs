@@ -1,7 +1,7 @@
-
 using FactoryAPI.Entities;
 using FactoryAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using NLog.Extensions.Logging;
 using System.Text.Json.Serialization;
 
 namespace FactoryAPI
@@ -19,6 +19,12 @@ namespace FactoryAPI
                 option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddSwaggerGen();
+            //configure logging
+            builder.Services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddNLog();
+            });
 
             builder.Services.AddScoped<IFactoryService, FactoryService>();
 

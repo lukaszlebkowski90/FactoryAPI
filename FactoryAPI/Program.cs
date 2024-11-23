@@ -28,6 +28,7 @@ namespace FactoryAPI
             });
 
             builder.Services.AddScoped<IFactoryService, FactoryService>();
+            builder.Services.AddScoped<IWorkerService, WorkerService>();
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
             builder.Services.AddDbContext<FactoryDbContext>

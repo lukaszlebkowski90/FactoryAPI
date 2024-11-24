@@ -31,8 +31,10 @@ namespace FactoryAPI
             builder.Services.AddScoped<IWorkerService, WorkerService>();
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
-            builder.Services.AddDbContext<FactoryDbContext>
-                (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
+            //builder.Services.AddDbContext<FactoryDbContext>
+            //    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
+
+
 
             var app = builder.Build();
             app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -52,17 +54,19 @@ namespace FactoryAPI
             app.UseAuthorization();
 
 
-
-
             using (var scope = app.Services.CreateScope())
             {
                 var seeder = scope.ServiceProvider.GetRequiredService<FactorySeeder>();
+
                 seeder.Seed();
 
                 var dbContext = scope.ServiceProvider.GetService<FactoryDbContext>();
-                var pendingMigrations = dbContext.Database.GetPendingMigrations();
-                if (pendingMigrations.Any())
-                    dbContext.Database.Migrate();
+                if (dbContext.Database.IsRelational())
+                {
+                    var pendingMigrations = dbContext.Database.GetPendingMigrations();
+                    if (pendingMigrations.Any())
+                        dbContext.Database.Migrate();
+                }
             }
 
             app.UseEndpoints(endpoints =>

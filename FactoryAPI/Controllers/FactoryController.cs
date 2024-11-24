@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FactoryAPI.Controllers
 {
-    [Route("api/factories")]
+    [Route("api/factory")]
     [ApiController]
     public class FactoryController(IFactoryService factoryService) : ControllerBase
     {
@@ -36,7 +36,7 @@ namespace FactoryAPI.Controllers
             var factoryId = _factoryService.Create(dto);
 
 
-            return Created($"/api/factories/{factoryId}", null);
+            return Created($"/api/factory/{factoryId}", null);
         }
 
         [HttpPut("{id}")]

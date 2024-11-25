@@ -8,8 +8,6 @@ namespace FactoryAPI
     {
         private readonly FactoryDbContext _dbContext;
 
-        private bool isTest => !_dbContext.Database.IsRelational();
-
         public FactorySeeder(FactoryDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -31,31 +29,39 @@ namespace FactoryAPI
 
                 if (!_dbContext.Factories.Any())
                 {
-                    var factories = GetFactories(isTest);
+                    var factories = GetFactories();
                     _dbContext.Factories.AddRange(factories);
                     _dbContext.SaveChanges();
                 }
+
+                if (!_dbContext.Roles.Any())
+                {
+                    var roles = GetRoles();
+                    _dbContext.Roles.AddRange(roles);
+                    _dbContext.SaveChanges();
+                }
+
+
             }
         }
 
-        private IEnumerable<Factory> GetFactories(bool isTest)
+        private IEnumerable<Factory> GetFactories()
         {
-            int count = isTest ? 5 : 100;
             var factories = new Faker<Factory>()
                     .RuleFor(n => n.Name, f => f.Company.CompanyName())
                     .RuleFor(d => d.Description, f => f.Company.CatchPhrase())
                     .RuleFor(c => c.ContactEmail, f => f.Person.Email)
                     .RuleFor(c => c.ContactNumber, f => f.Person.Phone)
-                    .RuleFor(a => a.Address, f =>
-                    new Faker<Address>()
-                    .RuleFor(c => c.City, f => f.Address.City())
-                    .RuleFor(p => p.PostalCode, f => f.Address.ZipCode())
-                    .RuleFor(s => s.Street, f => f.Address.StreetAddress())
+                    .RuleFor
+                    (
+                        a => a.Address, f =>
+                        new Faker<Address>()
+                        .RuleFor(c => c.City, f => f.Address.City())
+                        .RuleFor(p => p.PostalCode, f => f.Address.ZipCode())
+                        .RuleFor(s => s.Street, f => f.Address.StreetAddress())
                     )
-                    .RuleFor(w => w.Workers,
-                    f => GetWorkers()
-                    )
-                    .Generate(count);
+                    .RuleFor(w => w.Workers, f => GetWorkers())
+                    .Generate(100);
             return factories;
         }
 
@@ -71,13 +77,23 @@ namespace FactoryAPI
                     new Faker<Worker>()
                         .RuleFor(f => f.FirstName, f => f.Person.FirstName)
                         .RuleFor(l => l.LastName, f => f.Person.LastName)
-                        .RuleFor(f => f.FullName, String.Empty)
                         .RuleFor(s => s.Salary, f => f.Finance.Amount(2200, 5700))
                         .RuleFor(j => j.JobSeniority, f => new Random().Next(0, 50))
                         );
             }
 
             return workers;
+        }
+
+        private IEnumerable<Role> GetRoles()
+        {
+            var roles = new List<Role>()
+            {
+                new Role() { Name = "User" },
+                new Role() { Name = "Manager" },
+                new Role() { Name = "Admin" }
+            };
+            return roles;
         }
 
     }

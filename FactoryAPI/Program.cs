@@ -31,8 +31,9 @@ namespace FactoryAPI
             builder.Services.AddScoped<IWorkerService, WorkerService>();
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
-            //builder.Services.AddDbContext<FactoryDbContext>
-            //    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
+            // if you want to test you have to comment adding db context below
+            builder.Services.AddDbContext<FactoryDbContext>
+                (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
 
 
 
@@ -56,13 +57,11 @@ namespace FactoryAPI
 
             using (var scope = app.Services.CreateScope())
             {
-                var seeder = scope.ServiceProvider.GetRequiredService<FactorySeeder>();
-
-                seeder.Seed();
-
                 var dbContext = scope.ServiceProvider.GetService<FactoryDbContext>();
                 if (dbContext.Database.IsRelational())
                 {
+                    var seeder = scope.ServiceProvider.GetRequiredService<FactorySeeder>();
+                    seeder.Seed();
                     var pendingMigrations = dbContext.Database.GetPendingMigrations();
                     if (pendingMigrations.Any())
                         dbContext.Database.Migrate();

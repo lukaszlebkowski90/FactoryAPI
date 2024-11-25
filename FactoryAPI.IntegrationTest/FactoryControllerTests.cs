@@ -30,14 +30,49 @@ namespace FactoryAPI.IntegrationTest
             _client = _factory.CreateClient();
         }
 
+        private void SeedRestaurant(Factory factory)
+        {
+            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var _dbContext = scope.ServiceProvider.GetService<FactoryDbContext>();
+
+            _dbContext.Factories.Add(factory);
+            _dbContext.SaveChanges();
+        }
 
         [Fact]
         public async Task GetFactory_ForCurrentFactory_ReturnsFactory()
         {
+            // arrange
 
+            var factory = new Factory()
+            {
+                CreatedById = 900,
+                Description = "test",
+                Name = "test",
+                Address = new Address()
+                {
+                    City = "test",
+                    Street = "test",
+                    PostalCode = "test"
+                },
+                Workers = new List<Worker>()
+                {
+                    new Worker()
+                    {
+                        FirstName = "Test",
+                        LastName = "test",
+                        Salary = 23456,
+                        JobSeniority = 30,
+                        FullName = "test"
+                    }
+                }
+
+            };
+
+            SeedRestaurant(factory);
             // act
-            var response = await _client.GetAsync("/api/factory/" + 5);
-
+            var response = await _client.GetAsync("/api/factory/" + factory.Id);
 
             // assert
 
@@ -47,9 +82,36 @@ namespace FactoryAPI.IntegrationTest
         [Fact]
         public async Task GetFactory_ForNotExsistingFactory_ReturnsNotFound()
         {
+            // arrange
+
+            var factory = new Factory()
+            {
+                CreatedById = 900,
+                Description = "test",
+                Name = "test",
+                Address = new Address()
+                {
+                    City = "test",
+                    Street = "test",
+                    PostalCode = "test"
+                },
+                Workers = new List<Worker>()
+                {
+                    new Worker()
+                    {
+                        FirstName = "Test",
+                        LastName = "test",
+                        Salary = 23456,
+                        JobSeniority = 30,
+                        FullName = "test"
+                    }
+                }
+
+            };
+            SeedRestaurant(factory);
 
             // act
-            var response = await _client.GetAsync("/api/factory/" + 999);
+            var response = await _client.GetAsync("/api/factory/" + factory.Id + 2);
 
 
             // assert

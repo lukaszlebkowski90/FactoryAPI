@@ -6,20 +6,17 @@ namespace FactoryAPI.Entities
     {
         public FactoryDbContext(DbContextOptions<FactoryDbContext> options) : base(options)
         {
-
         }
 
         public DbSet<Factory> Factories { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Worker> Workers { get; set; }
-
-        //public DbSet<User> Users { get; set; }
-        //public DbSet<Role> Roles { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
-
     }
 }

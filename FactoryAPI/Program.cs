@@ -31,10 +31,11 @@ namespace FactoryAPI
             builder.Services.AddScoped<IWorkerService, WorkerService>();
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
-            // if you want to test you have to comment adding db context below
+            // directive DISABLE_FOR_TESTING is helpfull when you need to run your intergation tests
+#if DISABLE_FOR_TESTING
             builder.Services.AddDbContext<FactoryDbContext>
                 (options => options.UseSqlServer(builder.Configuration.GetConnectionString("FactoryDbConnection")));
-
+#endif
 
 
             var app = builder.Build();

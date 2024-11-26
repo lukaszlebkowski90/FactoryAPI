@@ -1,6 +1,7 @@
 ﻿using FactoryAPI.Entities;
 using FactoryAPI.Models;
 using FactoryAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FactoryAPI.Controllers
@@ -11,6 +12,7 @@ namespace FactoryAPI.Controllers
     {
         private readonly IFactoryService _factoryService = factoryService;
 
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult<IEnumerable<Factory>> GetAll()
         {
@@ -19,6 +21,7 @@ namespace FactoryAPI.Controllers
             return Ok(factories);
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpGet("{id}")]
         public ActionResult<Factory> Get([FromRoute] int id)
         {
@@ -30,6 +33,7 @@ namespace FactoryAPI.Controllers
             return Ok(restaurant);
         }
 
+        [Authorize]
         [HttpPost]
         public ActionResult<Factory> Create([FromBody] CreateFactoryDto dto)
         {
@@ -39,6 +43,7 @@ namespace FactoryAPI.Controllers
             return Created($"/api/factory/{factoryId}", null);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public ActionResult Update([FromBody] UpdateFactoryDto dto, [FromRoute] int id)
         {
@@ -47,6 +52,7 @@ namespace FactoryAPI.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {

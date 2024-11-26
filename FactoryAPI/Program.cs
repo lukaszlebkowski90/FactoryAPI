@@ -1,8 +1,16 @@
+using FactoryAPI.Authorization;
 using FactoryAPI.Entities;
 using FactoryAPI.Middleware;
+using FactoryAPI.Models;
+using FactoryAPI.Models.Validators;
 using FactoryAPI.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Extensions.Logging;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace FactoryAPI
@@ -12,12 +20,49 @@ namespace FactoryAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var authenticationSettings = new AuthenticationSettings();
+
+            builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
+            builder.Services.AddSingleton(authenticationSettings);
+            builder.Services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = "Bearer";
+                option.DefaultScheme = "Bearer";
+                option.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+                };
+            });
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
+                options.AddPolicy("Atleast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
+                options.AddPolicy("CreatedAtleast2Restaurants",
+                    builder => builder.AddRequirements(new CreatedMultipleFactoryRequirement(2)));
+            });
+
+            //builder.Services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
+            //builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+            //builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
+            builder.Services.AddControllers();
+
 
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<FactorySeeder>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddControllers().AddJsonOptions(option =>
                 option.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddSwaggerGen();
             //configure logging
@@ -50,10 +95,10 @@ namespace FactoryAPI
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Factory API");
                 });
             }
+            app.UseAuthorization();
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
 
 
             using (var scope = app.Services.CreateScope())

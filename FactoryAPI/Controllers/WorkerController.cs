@@ -1,5 +1,6 @@
 ﻿using FactoryAPI.Models;
 using FactoryAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FactoryAPI.Controllers
@@ -10,6 +11,7 @@ namespace FactoryAPI.Controllers
     {
         private readonly IWorkerService _workerService = workerService;
 
+        [Authorize]
         [HttpDelete]
         public ActionResult Delete([FromRoute] int factoryId)
         {
@@ -18,6 +20,7 @@ namespace FactoryAPI.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPost]
         public ActionResult Post([FromRoute] int factoryId, [FromBody] CreateWorkerDto dto)
         {
@@ -26,6 +29,7 @@ namespace FactoryAPI.Controllers
             return Created($"api/factory/{factoryId}/worker/{newWorkerId}", null);
         }
 
+        [Authorize]
         [HttpPut("{workerid}")]
         public ActionResult Update([FromBody] UpdateWorkerDto dto, [FromRoute] int factoryId, [FromRoute] int workerid)
         {
@@ -34,6 +38,7 @@ namespace FactoryAPI.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("{workerId}")]
         public ActionResult<WorkerDto> Get([FromRoute] int factoryId, [FromRoute] int workerId)
         {
@@ -41,6 +46,7 @@ namespace FactoryAPI.Controllers
             return Ok(worker);
         }
 
+        [Authorize]
         [HttpGet]
         public ActionResult<List<WorkerDto>> Get([FromRoute] int factoryId)
         {

@@ -6,6 +6,7 @@ using FactoryAPI.Models.Validators;
 using FactoryAPI.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -49,7 +50,7 @@ namespace FactoryAPI
                     builder => builder.AddRequirements(new CreatedMultipleFactoryRequirement(2)));
             });
 
-            //builder.Services.AddScoped<IAuthorizationHandler, CreatedMultipleRestaurantsRequirementHandler>();
+            builder.Services.AddScoped<IAuthorizationHandler, CreatedMultipleFactoriesRequirementHandler>();
             //builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
             //builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             builder.Services.AddControllers();
@@ -72,9 +73,11 @@ namespace FactoryAPI
                 loggingBuilder.AddNLog();
             });
 
+            builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IFactoryService, FactoryService>();
             builder.Services.AddScoped<IWorkerService, WorkerService>();
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
+            builder.Services.AddScoped<IUserContextService, UserContextService>();
 
             // directive DISABLE_FOR_TESTING is helpfull when you need to run your intergation tests
 #if DISABLE_FOR_TESTING

@@ -14,16 +14,17 @@ namespace FactoryAPI.Services
         void Delete(int id);
         void Update(int id, UpdateFactoryDto dto);
     }
-    public class FactoryService(FactoryDbContext dbContext, IMapper mapper, ILogger<FactoryService> logger) : IFactoryService
+    public class FactoryService(FactoryDbContext dbContext, IMapper mapper, ILogger<FactoryService> logger, IUserContextService userContextService) : IFactoryService
     {
         private readonly FactoryDbContext _dbContext = dbContext;
         private readonly ILogger<FactoryService> _logger = logger;
         private readonly IMapper _mapper = mapper;
+        private readonly IUserContextService _userContextService = userContextService;
 
         public int Create(CreateFactoryDto dto)
         {
             var factory = _mapper.Map<Factory>(dto);
-
+            factory.CreatedById = _userContextService.GetUserId;
             _dbContext.Add(factory);
             _dbContext.SaveChanges();
 

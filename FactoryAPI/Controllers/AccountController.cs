@@ -3,7 +3,7 @@ using FactoryAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace RestaurantAPI.Controllers
+namespace FactoryAPI.Controllers
 {
     [Route("api/account")]
     [ApiController]
